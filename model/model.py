@@ -1,5 +1,5 @@
 import sqlite3
-import aes256
+import model.aes256 as aes256
 
 
 class Password:
