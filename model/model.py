@@ -53,7 +53,7 @@ class PasswordManager:
                 ''', (new_password.username, new_password.source, new_password.salt, new_password.encrypted_password))
             conn.commit()
 
-    def get_passwords(self):
+    def get_all_passwords(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT username, source, salt, encrypted_password FROM passwords')

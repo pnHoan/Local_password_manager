@@ -31,3 +31,16 @@ class UI():
             print(tabulate(data, headers=header, tablefmt="fancy_grid"))
         else:
             UI.displayError(404, "No password found in database")
+
+    @staticmethod
+    def insertPassword():
+        username = input("Enter username: ")
+        source = input("Enter source (e.g., website): ")
+        password = getpass("Enter password: ")
+
+        return username, source, password
+
+    @staticmethod
+    def displayPassword(password):
+        # TODO: Add star or somethings to mask the plain
+        print("foo")
