@@ -12,9 +12,9 @@ def key_gen(password, salt):
         length=32,
         salt=salt,
         iterations=100000,
-        backend=default_backend()
+        backend=default_backend(),
     )
-    key = kdf.derive(password.encode('utf-8'))
+    key = kdf.derive(password.encode("utf-8"))
     return key
 
 
@@ -34,8 +34,12 @@ def decrypt(ciphertext, key):
     decryptor = cipher.decryptor()
     padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
     unpadder = padding.PKCS7(128).unpadder()
-    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()
-    return plaintext
+    try:
+        plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()
+        return plaintext
+    except ValueError:
+        print("Decryption failed. Invalid key or ciphertext.")
+        return None
 
 
 def get_random_string(length):

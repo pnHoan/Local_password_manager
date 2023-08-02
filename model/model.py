@@ -3,7 +3,7 @@ import model.aes256 as aes256
 
 
 class Password:
-    def __init__(self, username, source, salt=''):
+    def __init__(self, username, source, salt=""):
         self.username = username
         self.source = source
         self.salt = salt
@@ -23,18 +23,23 @@ class Password:
         # self.encrypted_password = aes256.decrypt(self.encrypted_password, key)
 
         # temp Return for testing
-        return aes256.decrypt(self.encrypted_password, key).decode()
+        decrypted_password = aes256.decrypt(self.encrypted_password, key)
+        if decrypted_password is not None:
+            return decrypted_password.decode("utf-8")
+        else:
+            return None
 
 
 class PasswordManager:
-    def __init__(self, db_path='passwords.db'):
+    def __init__(self, db_path="passwords.db"):
         self.db_path = db_path
         self.create_table()
 
     def create_table(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
+            cursor.execute(
+                """
                 CREATE TABLE IF NOT EXISTS passwords (
                     id INTEGER PRIMARY KEY,
                     username TEXT NOT NULL,
@@ -42,21 +47,32 @@ class PasswordManager:
                     salt TEXT NOT NULL,
                     encrypted_password BLOB NOT NULL
                 )
-            ''')
+            """
+            )
             conn.commit()
 
     def add_password(self, new_password):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
+            cursor.execute(
+                """
                 INSERT INTO passwords (username, source, salt, encrypted_password) VALUES (?, ?, ?, ?)
-                ''', (new_password.username, new_password.source, new_password.salt, new_password.encrypted_password))
+                """,
+                (
+                    new_password.username,
+                    new_password.source,
+                    new_password.salt,
+                    new_password.encrypted_password,
+                ),
+            )
             conn.commit()
 
     def get_all_passwords(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT username, source, salt, encrypted_password FROM passwords')
+            cursor.execute(
+                "SELECT username, source, salt, encrypted_password FROM passwords"
+            )
             rows = cursor.fetchall()
 
             passwords = []
@@ -70,7 +86,13 @@ class PasswordManager:
     def get_passwd(self, username, source):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT username, source, salt, encrypted_password FROM passwords WHERE username = ? AND source = ?', (username, source,))
+            cursor.execute(
+                "SELECT username, source, salt, encrypted_password FROM passwords WHERE username = ? AND source = ?",
+                (
+                    username,
+                    source,
+                ),
+            )
             row = cursor.fetchone()
 
             if row is None:
@@ -80,20 +102,33 @@ class PasswordManager:
         password = Password(username, source, salt)
         password.encrypted_password = encrypted_password
         return password
-
-    def update_password(self, old_password, new_password):
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-            UPDATE passwords SET username = ?, source = ?, salt = ?, encrypted_password = ? WHERE username = ? AND source = ?
-            ''', (new_password.username, new_password.source, new_password.salt, new_password.encrypted_password, old_password.username, old_password.source,))
-            conn.commit()
+    #
+    # def update_password(self, old_password, new_password):
+    #     with sqlite3.connect(self.db_path) as conn:
+    #         cursor = conn.cursor()
+    #         cursor.execute(
+    #             """
+    #         UPDATE passwords SET username = ?, source = ?, salt = ?, encrypted_password = ? WHERE username = ? AND source = ?
+    #         """,
+    #             (
+    #                 new_password.username,
+    #                 new_password.source,
+    #                 new_password.salt,
+    #                 new_password.encrypted_password,
+    #                 old_password.username,
+    #                 old_password.source,
+    #             ),
+    #         )
+    #         conn.commit()
 
     def delete_password(self, username, source):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
+            cursor.execute(
+                """
             DELETE FROM passwords WHERE username = ? AND source = ?
-            ''', (username, source))
+            """,
+                (username, source),
+            )
 
             conn.commit()
