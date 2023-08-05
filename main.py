@@ -1,7 +1,23 @@
 import click
+import configparser
+import os
 from control import control
+from view.view import UI
+from helper import initConfig
 
-controller = control.PasswordManagerController("./db/database.db")
+CONFIG_F = "config.ini"
+ui = UI()
+
+if not os.path.exists(CONFIG_F):
+    if initConfig():
+        pass
+    else:
+        exit()
+
+
+config = configparser.ConfigParser()
+config.read(CONFIG_F)
+controller = control.PasswordManagerController(config.get("CONFIG", "db_path"))
 
 
 @click.command(name="new", help="Add new password")
@@ -12,15 +28,16 @@ def add():
 @click.command(name="get", help="Get password")
 @click.argument("username", required=True)
 @click.argument("source", required=True)
-def get(username, source):
+@click.option("--copy", "-c", is_flag=True)
+def get(username, source, copy):
     controller.get_password(username, source)
-
-
+    if copy:
+        click.echo("ok bro")
 # @click.command()
 # @click.argument("username", required=True)
 # @click.argument("source", required=True)
 # def update(username, source):
-#     controller.update_password(username=username, source=source)
+#    controller.update_password(username=username, source=source)
 
 
 @click.command(name="del", help="Delete exist password")
@@ -44,7 +61,6 @@ def main():
     cli.add_command(get_all)
     cli.add_command(add)
     cli.add_command(get)
-    # cli.add_command(update)
     cli.add_command(delete)
 
     cli()

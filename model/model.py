@@ -102,6 +102,7 @@ class PasswordManager:
         password = Password(username, source, salt)
         password.encrypted_password = encrypted_password
         return password
+
     #
     # def update_password(self, old_password, new_password):
     #     with sqlite3.connect(self.db_path) as conn:

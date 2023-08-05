@@ -61,3 +61,11 @@ class UI:
         if password_string is not None:
             print(password_string[:5], end="")
             print("*" * len(password_string[5:]))
+
+    @staticmethod
+    def getUserInput(promt, defaultValue):
+        userInput = input(f"{promt} [{defaultValue}]")
+        if userInput:
+            return userInput
+        else:
+            return defaultValue

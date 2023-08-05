@@ -1,5 +1,6 @@
 import view.view as view
 import model.model as model
+import pyperclip as pc
 
 
 class PasswordManagerController:
@@ -27,6 +28,17 @@ class PasswordManagerController:
         if password:
             plain_password = password.decrypt_password(masterPassword)
             self.view.displayPassword(plain_password)
+        else:
+            self.view.displayError(404, "Password not found.")
+
+    def get_password_to_clipboard(self, username, source):
+        masterPassword = self.view.getMasterPassword()
+
+        password = self.model.get_passwd(username, source)
+
+        if password:
+            plain_password = password.decrypt_password(masterPassword)
+            pc.copy(plain_password)
         else:
             self.view.displayError(404, "Password not found.")
 
