@@ -26,7 +26,7 @@ class UI:
             username = passwd.username
             encrypted_password = passwd.encrypted_password.hex()
 
-            data.append([source, username, encrypted_password])
+            data.append([username, source, encrypted_password])
 
         if len(data) != 0:
             print(tabulate(data, headers=header, tablefmt="fancy_grid"))

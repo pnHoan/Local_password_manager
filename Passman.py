@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import click
 import configparser
 import os
@@ -33,6 +35,8 @@ def get(username, source, copy):
     controller.get_password(username, source)
     if copy:
         click.echo("ok bro")
+
+
 # @click.command()
 # @click.argument("username", required=True)
 # @click.argument("source", required=True)

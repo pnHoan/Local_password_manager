@@ -20,6 +20,5 @@ def initConfig():
 
         return True
     else:
-        print(f"debug: {dbpath}")
         ui.displayError(404, "Wrong input path")
         return False
